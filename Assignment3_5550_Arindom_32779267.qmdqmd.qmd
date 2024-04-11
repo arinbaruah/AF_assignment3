@@ -3,25 +3,83 @@ title: "Assignment 3"
 author: "Arindom Baruah (32779267)"
 format: html
 editor: visual
+number-sections: true
+execute: 
+  warning: false
+  message: false
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+# Libraries
 
 ```{r}
-1 + 1
+library(fpp3)
+library(tidyverse)
+library(tidyverse)
+library(kableExtra)
 ```
 
-You can add options to executable code like this
+# Data
 
 ```{r}
-#| echo: false
-2 * 2
+#| label: tbl-data
+#| tbl-cap: "Glimpse of the data"
+
+set.seed(32779267)
+pop <- readr::read_rds("https://bit.ly/monashpopulationdata") |>
+  filter(Country == sample(Country, 1))
+
+pop %>% head() %>% kbl()
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+@tbl-data illustrates the timeseries data for the country "Africa Western and Central	AFW" which shall be analysed in the upcoming sections.
+
+# Exercises
+
+## Splitting data into train-test data and fitting benchmark models
+
+Let us first visualise the population growth for the country "Africa Western and Central AFW".
+
+```{r}
+#| label: fig-totpop
+#| fig-cap: "Population growth in Africa Western and Central AFW"
+pop %>% autoplot() + theme_minimal() + labs(title = "Population growth in Africa Western and Central AFW")
+```
+
+:::{.callout-note}
+# Key takeaway
+
+As we can observe in @fig-totpop, __the population in Africa and Central AFW has grown at an exponential rate__. 
+
+We shall transform our data such that the overall trend of the data is linear. In this regard, __we shall apply a logarithmic transformation of our data.__
+:::
+
+
+```{r}
+#| label: fig-totpoplog
+#| fig-cap: "Logarithim population growth in Africa Western and Central AFW"
+
+pop_log <- pop %>% mutate(Log_population = log(Population))
+
+pop_log %>% autoplot(Log_population) + theme_minimal() + 
+  labs(title = "Logarithmic population growth in Africa Western and Central AFW",y = "Log of population")
+```
+
+As we can now observe through @fig-totpoplog, __upon performing the logarithmic transformation, we can observe a linear trend in the growth rate.__
+
+
+
+In the next step, we shall split our data into train and test data. The split is formed on the following basis:
+
+- Population data for the years __before 2018__ will be used as the __train dataset__
+- Population data for the years __2018 - 2022__ will be used as the __test dataset__
+
+```{r}
+pop_train <- pop_log %>% filter(Year < 2018) # Train dataset
+pop_test <- pop_log %>% filter(Year >= 2018) # Test dataset
+```
+
+
+
+
+
+
