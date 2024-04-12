@@ -74,12 +74,47 @@ In the next step, we shall split our data into train and test data. The split is
 - Population data for the years __2018 - 2022__ will be used as the __test dataset__
 
 ```{r}
-pop_train <- pop_log %>% filter(Year < 2018) # Train dataset
-pop_test <- pop_log %>% filter(Year >= 2018) # Test dataset
+pop_train <- pop_log %>% filter(Year < 2018) %>% select(-Population) # Train dataset
+pop_test <- pop_log %>% filter(Year >= 2018) %>% select(-Population) # Test dataset
 ```
 
 
+Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:
+
+- ETS (Error Trend Seasonality) model
+- Naïve model
+- Mean model
+- Drift model
+
+As our data does not contain a seasonality component, hence we shall not fit a seasonal naïve model.
+
+```{r}
+model_fit <- pop_train %>% model(ets = ETS(Log_population), # ETS Model
+                    naive = NAIVE(Log_population), # Naïve model
+                    mean = MEAN(Log_population), # Mean model
+                    drift = RW(Log_population ~ drift())) # Drift model
+```
 
 
+Once we have fitted our training data on the ETS model and the benchmark models, we will check the peformance of each of these models. 
+
+
+```{r}
+#| label: tbl-accuracy
+#| tbl-cap: "Model performance output metrics"
+
+pop_fc <- model_fit |>
+  forecast()
+
+pop_fc %>% accuracy(pop_test) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+```
+
+:::{.callout-note}
+# Key takeaway
+
+As we can observe in @tbl-accuracy, the __"Drift method"__ is observed to be the model which has forecasted the test dataset with least root mean square error. This is followed by the ETS model, Naïve model and the mean model respectively.
+
+__Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.__
+:::
 
 

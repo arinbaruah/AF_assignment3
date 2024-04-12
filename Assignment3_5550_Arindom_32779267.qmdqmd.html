@@ -223,15 +223,98 @@ Key takeaway
 </div>
 </div>
 </div>
-<p>As we can now observe through <a href="#fig-totpoplog">Figure&nbsp;2</a>, <strong>upon performing the logarithmic transformation, we can observe a linear trend in the growth.</strong></p>
+<p>As we can now observe through <a href="#fig-totpoplog">Figure&nbsp;2</a>, <strong>upon performing the logarithmic transformation, we can observe a linear trend in the growth rate.</strong></p>
 <p>In the next step, we shall split our data into train and test data. The split is formed on the following basis:</p>
 <ul>
 <li>Population data for the years <strong>before 2018</strong> will be used as the <strong>train dataset</strong></li>
 <li>Population data for the years <strong>2018 - 2022</strong> will be used as the <strong>test dataset</strong></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="co"># Train dataset</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Train dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:</p>
+<ul>
+<li>ETS (Error Trend Seasonality) model</li>
+<li>Naïve model</li>
+<li>Mean model</li>
+<li>Drift model</li>
+</ul>
+<p>As our data does not contain a seasonality component, hence we shall not fit a seasonal naïve model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> pop_train <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="co"># Drift model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once we have fitted our training data on the ETS model and the benchmark models, we will check the peformance of each of these models.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-accuracy" class="anchored">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<caption>Table&nbsp;2: Model performance output metrics</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.type</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">RMSE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ACF1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">drift</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0001676</td>
+<td style="text-align: right;">-0.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ets</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0007952</td>
+<td style="text-align: right;">-0.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">naive</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0414338</td>
+<td style="text-align: right;">-0.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.8089472</td>
+<td style="text-align: right;">-0.5</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key takeaway
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>As we can observe in <a href="#tbl-accuracy">Table&nbsp;2</a>, the <strong>“Drift method”</strong> is observed to be the model which has forecasted the test dataset with least root mean square error. This is followed by the ETS model, Naïve model and the mean model respectively.</p>
+<p><strong>Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.</strong></p>
+</div>
 </div>
 </section>
 </section>
