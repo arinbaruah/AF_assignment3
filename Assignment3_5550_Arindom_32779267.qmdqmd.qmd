@@ -35,14 +35,15 @@ pop %>% head() %>% kbl()
 
 # Exercises
 
-## Splitting data into train-test data and fitting benchmark models
+## Splitting data into train-test data and fitting benchmark models.{#sec-initial}
 
 Let us first visualise the population growth for the country "Africa Western and Central AFW".
 
 ```{r}
 #| label: fig-totpop
 #| fig-cap: "Population growth in Africa Western and Central AFW"
-pop %>% autoplot() + theme_minimal() + labs(title = "Population growth in Africa Western and Central AFW")
+pop %>% autoplot() + theme_minimal() + 
+  labs(title = "Population growth in Africa Western and Central AFW")
 ```
 
 :::{.callout-note}
@@ -170,3 +171,30 @@ model_fit %>% forecast(h = "10 years")  %>% autoplot(pop_train) +
        y = "Logarithmic population") + theme_minimal()
 ```
 As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely.__
+
+
+## Utilisation of cross-validation and recalculation of RMSE for the models
+
+In this section, we will attempt to perform cross-validation on our training data which will provide us with multiple smaller training data and allow our model to fit better, thereby providing us with more accurate forecasts. The implementation of cross-validation of our data is delineated below.
+
+```{r}
+#| label: tbl-cv
+#| tbl-cap: "Updated RMSE of each model after performing cross-validation on the training data"
+
+pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>% 
+                    model(ets = ETS(Log_population), # ETS Model
+                    naive = NAIVE(Log_population), # Naïve model
+                    mean = MEAN(Log_population), # Mean model
+                    drift = RW(Log_population ~ drift())) %>% # Drift model
+                             forecast(h = "5 years") %>% accuracy(pop_train) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+ 
+```
+
+:::{.callout-note}
+# Key takeaway
+
+After performing cross-validation of the data and obtaining the model metrics as illustrated by @tbl-cv, __we observe that the ETS model is the one that performs the best followed by the drift model.__ 
+
+This indicates that __with the implementation of the cross-validation, the ETS model is able to train itself better due to the availability of more data and outperform the drift method which was observed to be the best in @sec-initial .__ 
+
+:::

@@ -181,11 +181,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exercises" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Exercises</h1>
-<section id="splitting-data-into-train-test-data-and-fitting-benchmark-models" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="splitting-data-into-train-test-data-and-fitting-benchmark-models"><span class="header-section-number">3.1</span> Splitting data into train-test data and fitting benchmark models</h2>
+<section id="sec-initial" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="sec-initial"><span class="header-section-number">3.1</span> Splitting data into train-test data and fitting benchmark models.</h2>
 <p>Let us first visualise the population growth for the country “Africa Western and Central AFW”.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pop <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Population growth in Africa Western and Central AFW"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pop <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Population growth in Africa Western and Central AFW"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-totpop" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -400,7 +401,7 @@ Key takeaway
 </ol>
 </div>
 </div>
-<p>Let us try to visualise how do our models perform for the training data.</p>
+<p>Let us try to visualise how do our forecasts look like for the training data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> pop_train)</span>
@@ -419,6 +420,80 @@ Key takeaway
 </div>
 </div>
 <p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely.</strong></p>
+</section>
+<section id="utilisation-of-cross-validation-and-recalculation-of-rmse-for-the-models" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="utilisation-of-cross-validation-and-recalculation-of-rmse-for-the-models"><span class="header-section-number">3.3</span> Utilisation of cross-validation and recalculation of RMSE for the models</h2>
+<p>In this section, we will attempt to perform cross-validation on our training data which will provide us with multiple smaller training data and allow our model to fit better, thereby providing us with more accurate forecasts. The implementation of cross-validation of our data is delineated below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="sc">%&gt;%</span> <span class="fu">stretch_tsibble</span>(<span class="at">.init =</span> <span class="dv">15</span>,<span class="at">.step =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_train) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-cv" class="anchored">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<caption>Table&nbsp;4: Updated RMSE of each model after performing cross-validation on the training data</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.type</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">RMSE</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">ACF1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ets</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0025288</td>
+<td style="text-align: right;">0.6989446</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drift</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0078037</td>
+<td style="text-align: right;">0.4328332</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">naive</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0890906</td>
+<td style="text-align: right;">0.0177905</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">mean</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.5551190</td>
+<td style="text-align: right;">0.9222475</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key takeaway
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>After performing cross-validation of the data and obtaining the model metrics as illustrated by <a href="#tbl-cv">Table&nbsp;4</a>, <strong>we observe that the ETS model is the one that performs the best followed by the drift model.</strong></p>
+<p>This indicates that <strong>with the implementation of the cross-validation, the ETS model is able to train itself better due to the availability of more data and outperform the drift method which was observed to be the best in <a href="#sec-initial">Section&nbsp;3.1</a> .</strong></p>
+</div>
+</div>
 </section>
 </section>
 
