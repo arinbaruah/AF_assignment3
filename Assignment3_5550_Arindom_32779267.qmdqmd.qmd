@@ -1,5 +1,5 @@
 ---
-title: "Assignment 3"
+title: "ETC 5550 Assignment 3"
 author: "Arindom Baruah (32779267)"
 format: html
 editor: visual
@@ -116,5 +116,44 @@ As we can observe in @tbl-accuracy, the __"Drift method"__ is observed to be the
 
 __Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.__
 :::
+
+
+## 2 Checking for the residuals of the Drift model
+
+Let us now check how do the residuals look like for the drift model.
+
+
+```{r}
+#| label: fig-residuals
+#| fig-cap: "Residual diagnosis of the predictions from the drift method"
+
+model_fit %>% select(drift) %>% gg_tsresiduals() + ggtitle("Residuals in the drift model") 
+```
+
+```{r}
+#| label: tbl-lb
+#| tbl-cap: "Ljung-Box test results for the model residuals"
+# ljung box test
+
+augment(model_fit) %>%
+  features(.resid,ljung_box) %>% kbl()
+```
+
+:::{.callout-note}
+# Key takeaway
+
+Based on the ACF plot in @fig-residuals, we can observe the following key points:
+
+1. The ACF plot illustrates that there is a pattern which we can observe in the residuals of the drift model.
+
+2. The pattern in the ACF plot indicates that the __model has missed out on the trend of the data, as a result of which, the ACF values appear to be higher than the significant thresholds__ (shown by the <span style=color:blue>blue lines</span>).
+
+3. Additionally, we observe that the __residuals of the model fail to form a normal distribution.__
+
+4. Performing the Ljung-Box test on the residuals as illustrated in @tbl-lb indicates that __the drift method has a `lb_pvalue` of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.__
+
+5. Based on the above observations, we can say that the __residuals of the model do not appear to be simple white noise.__
+:::
+
 
 

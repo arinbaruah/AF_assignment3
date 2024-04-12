@@ -8,7 +8,7 @@
 
 <meta name="author" content="Arindom Baruah (32779267)">
 
-<title>Assignment 3</title>
+<title>ETC 5550 Assignment 3</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assignment 3</h1>
+<h1 class="title">ETC 5550 Assignment 3</h1>
 </div>
 
 
@@ -314,6 +314,90 @@ Key takeaway
 <div class="callout-body-container callout-body">
 <p>As we can observe in <a href="#tbl-accuracy">Table&nbsp;2</a>, the <strong>“Drift method”</strong> is observed to be the model which has forecasted the test dataset with least root mean square error. This is followed by the ETS model, Naïve model and the mean model respectively.</p>
 <p><strong>Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.</strong></p>
+</div>
+</div>
+</section>
+<section id="checking-for-the-residuals-of-the-drift-model" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="checking-for-the-residuals-of-the-drift-model"><span class="header-section-number">3.2</span> 2 Checking for the residuals of the Drift model</h2>
+<p>Let us now check how do the residuals look like for the drift model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="sc">%&gt;%</span> <span class="fu">select</span>(drift) <span class="sc">%&gt;%</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Residuals in the drift model"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-residuals" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Assignment3_5550_Arindom_32779267.qmdqmd_files/figure-html/fig-residuals-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;3: Residual diagnosis of the predictions from the drift method</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ljung box test</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(model_fit) <span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="tbl-lb" class="anchored">
+<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<caption>Table&nbsp;3: Ljung-Box test results for the model residuals</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">lb_stat</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">lb_pvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">drift</td>
+<td style="text-align: right;">50.443880</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">ets</td>
+<td style="text-align: right;">1.948661</td>
+<td style="text-align: right;">0.1627312</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">mean</td>
+<td style="text-align: right;">55.087303</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">naive</td>
+<td style="text-align: right;">50.443880</td>
+<td style="text-align: right;">0.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key takeaway
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Based on the ACF plot in <a href="#fig-residuals">Figure&nbsp;3</a>, we can observe the following key points:</p>
+<ol type="1">
+<li><p>The ACF plot illustrates that there is a pattern which we can observe in the residuals of the drift model.</p></li>
+<li><p>The pattern in the ACF plot indicates that the <strong>model has missed out on the trend of the data, as a result of which, the ACF values appear to be higher than the significant thresholds</strong> (shown by the <span style="color:blue">blue lines</span>).</p></li>
+<li><p>Additionally, we observe that the <strong>residuals of the model fail to form a normal distribution.</strong></p></li>
+<li><p>Performing the Ljung-Box test on the residuals as illustrated in <a href="#tbl-lb">Table&nbsp;3</a> indicates that <strong>the drift method has a <code>lb_pvalue</code> of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.</strong></p></li>
+<li><p>Based on the above observations, we can say that the <strong>residuals of the model do not appear to be simple white noise.</strong></p></li>
+</ol>
 </div>
 </div>
 </section>
