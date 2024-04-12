@@ -118,7 +118,7 @@ __Hence, based on the RMSE values, we can say that the Drift method foreacasts t
 :::
 
 
-## 2 Checking for the residuals of the Drift model
+## Checking for the residuals of the Drift model
 
 Let us now check how do the residuals look like for the drift model.
 
@@ -150,10 +150,23 @@ Based on the ACF plot in @fig-residuals, we can observe the following key points
 
 3. Additionally, we observe that the __residuals of the model fail to form a normal distribution.__
 
-4. Performing the Ljung-Box test on the residuals as illustrated in @tbl-lb indicates that __the drift method has a `lb_pvalue` of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.__
+4. Performing the Ljung-Box test on the residuals as illustrated in @tbl-lb indicates that __the drift method has a Ljung-Box P-value (`lb_pvalue`) of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.__
 
 5. Based on the above observations, we can say that the __residuals of the model do not appear to be simple white noise.__
 :::
 
+Let us try to visualise how do our forecasts look like for the training data.
+
+```{r}
+#| label: fig-model
+#| fig-cap: "Forecasts and the confidence intervals for each model"
+
+pop_fc <- model_fit |>
+  forecast(new_data = pop_train)
 
 
+model_fit %>% forecast(h = "10 years")  %>% autoplot(pop_train) + 
+  labs(title = "Forecasted population in Africa Western and Central AFW",
+       y = "Logarithmic population") + theme_minimal()
+```
+As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely.__

@@ -318,7 +318,7 @@ Key takeaway
 </div>
 </section>
 <section id="checking-for-the-residuals-of-the-drift-model" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="checking-for-the-residuals-of-the-drift-model"><span class="header-section-number">3.2</span> 2 Checking for the residuals of the Drift model</h2>
+<h2 data-number="3.2" class="anchored" data-anchor-id="checking-for-the-residuals-of-the-drift-model"><span class="header-section-number">3.2</span> Checking for the residuals of the Drift model</h2>
 <p>Let us now check how do the residuals look like for the drift model.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="sc">%&gt;%</span> <span class="fu">select</span>(drift) <span class="sc">%&gt;%</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Residuals in the drift model"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -395,11 +395,30 @@ Key takeaway
 <li><p>The ACF plot illustrates that there is a pattern which we can observe in the residuals of the drift model.</p></li>
 <li><p>The pattern in the ACF plot indicates that the <strong>model has missed out on the trend of the data, as a result of which, the ACF values appear to be higher than the significant thresholds</strong> (shown by the <span style="color:blue">blue lines</span>).</p></li>
 <li><p>Additionally, we observe that the <strong>residuals of the model fail to form a normal distribution.</strong></p></li>
-<li><p>Performing the Ljung-Box test on the residuals as illustrated in <a href="#tbl-lb">Table&nbsp;3</a> indicates that <strong>the drift method has a <code>lb_pvalue</code> of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.</strong></p></li>
+<li><p>Performing the Ljung-Box test on the residuals as illustrated in <a href="#tbl-lb">Table&nbsp;3</a> indicates that <strong>the drift method has a Ljung-Box P-value (<code>lb_pvalue</code>) of less than 0.05, which further indicates that the model has failed the test and could not effectively produce an accurate forecast of the data.</strong></p></li>
 <li><p>Based on the above observations, we can say that the <strong>residuals of the model do not appear to be simple white noise.</strong></p></li>
 </ol>
 </div>
 </div>
+<p>Let us try to visualise how do our models perform for the training data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> pop_train)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model_fit <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"10 years"</span>)  <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>(pop_train) <span class="sc">+</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Forecasted population in Africa Western and Central AFW"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Logarithmic population"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-model" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Assignment3_5550_Arindom_32779267.qmdqmd_files/figure-html/fig-model-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;4: Forecasts and the confidence intervals for each model</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely.</strong></p>
 </section>
 </section>
 
