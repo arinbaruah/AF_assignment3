@@ -268,7 +268,7 @@ Key takeaway
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
@@ -331,7 +331,7 @@ Key takeaway
 </div>
 <div class="callout-body-container callout-body">
 <p>As we can observe in <a href="#tbl-accuracy">Table&nbsp;2</a>, the <strong>“Drift method”</strong> is observed to be the model which has forecasted the test dataset with least root mean square error. This is followed by the ETS model, Naïve model and the mean model respectively.</p>
-<p><strong>Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.</strong></p>
+<p><strong>Hence, based on the RMSE values, we can say that the Drift method forecasts the best for the test dataset.</strong></p>
 </div>
 </div>
 </section>
@@ -445,7 +445,7 @@ Key takeaway
 </div>
 </div>
 </div>
-<p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely, albeit we can observe that the drift model has a narrower confidence interval compared to the ETS model.</strong></p>
+<p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely.</strong></p>
 </section>
 <section id="sec-final" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="sec-final"><span class="header-section-number">3.3</span> Utilisation of cross-validation and recalculation of RMSE for the models</h2>
@@ -458,7 +458,7 @@ Key takeaway
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(<span class="fu">log</span>(Population)), <span class="co"># Naïve model</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(<span class="fu">log</span>(Population)), <span class="co"># Mean model</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(<span class="fu">log</span>(Population))) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-cv" class="anchored">
@@ -478,29 +478,29 @@ Key takeaway
 <td style="text-align: left;">ets</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">1146247</td>
-<td style="text-align: right;">0.2254617</td>
+<td style="text-align: right;">672720.9</td>
+<td style="text-align: right;">0.6583410</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">drift</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">43950684</td>
-<td style="text-align: right;">0.2080688</td>
+<td style="text-align: right;">25280713.9</td>
+<td style="text-align: right;">0.3191447</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">naive</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">43950684</td>
-<td style="text-align: right;">0.2080688</td>
+<td style="text-align: right;">25280713.9</td>
+<td style="text-align: right;">0.3191447</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mean</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">243400574</td>
-<td style="text-align: right;">0.1867781</td>
+<td style="text-align: right;">133095404.9</td>
+<td style="text-align: right;">0.9599110</td>
 </tr>
 </tbody>
 </table>

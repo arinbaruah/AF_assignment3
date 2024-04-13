@@ -108,7 +108,7 @@ Once we have fitted our training data on the ETS model and the benchmark models,
 pop_fc <- model_fit |>
   forecast()
 
-pop_fc %>% accuracy(pop_test) %>% arrange(RMSE) %>% 
+pop_fc %>% accuracy(pop) %>% arrange(RMSE) %>% 
   select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
 ```
 
@@ -117,7 +117,7 @@ pop_fc %>% accuracy(pop_test) %>% arrange(RMSE) %>%
 
 As we can observe in @tbl-accuracy, the __"Drift method"__ is observed to be the model which has forecasted the test dataset with least root mean square error. This is followed by the ETS model, Naïve model and the mean model respectively.
 
-__Hence, based on the RMSE values, we can say that the Drift method foreacasts the best for the test dataset.__
+__Hence, based on the RMSE values, we can say that the Drift method forecasts the best for the test dataset.__
 :::
 
 
@@ -172,7 +172,7 @@ model_fit %>% forecast(h = "10 years")  %>% autoplot(pop_train) +
   labs(title = "Forecasted population in Africa Western and Central AFW",
        y = "Logarithmic population") + theme_minimal()
 ```
-As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely, albeit we can observe that the drift model has a narrower confidence interval compared to the ETS model.__
+As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely.__
 
 
 ## Utilisation of cross-validation and recalculation of RMSE for the models {#sec-final}
@@ -188,7 +188,7 @@ pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>%
                     naive = NAIVE(log(Population)), # Naïve model
                     mean = MEAN(log(Population)), # Mean model
                     drift = RW(log(Population))) %>% # Drift model
-                             forecast(h = "5 years") %>% accuracy(pop_test) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+                             forecast(h = "5 years") %>% accuracy(pop) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
  
 ```
 
