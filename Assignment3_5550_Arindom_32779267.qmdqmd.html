@@ -219,10 +219,8 @@ Key takeaway
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pop_log <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Log_population =</span> <span class="fu">log</span>(Population))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>pop_log <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>(Log_population) <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Logarithmic population growth in Africa Western and Central AFW"</span>,<span class="at">y =</span> <span class="st">"Log of population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pop <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>(<span class="fu">log</span>(Population)) <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Logarithmic population growth in Africa Western and Central AFW"</span>,<span class="at">y =</span> <span class="st">"Log of population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="fig-totpoplog" class="quarto-figure quarto-figure-center anchored">
@@ -242,8 +240,8 @@ Key takeaway
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Train dataset</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="co"># Train dataset</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:</p>
@@ -257,10 +255,10 @@ Key takeaway
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> pop_train <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="co"># Drift model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> pop_train <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(<span class="fu">log</span>(Population)), <span class="co"># ETS Model</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(<span class="fu">log</span>(Population)), <span class="co"># Naïve model</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(<span class="fu">log</span>(Population)), <span class="co"># Mean model</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(<span class="fu">log</span>(Population) <span class="sc">~</span> <span class="fu">drift</span>())) <span class="co"># Drift model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Once we have fitted our training data on the ETS model and the benchmark models, we will check the peformance of each of these models.</p>
@@ -291,28 +289,28 @@ Key takeaway
 <td style="text-align: left;">drift</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0001676</td>
+<td style="text-align: right;">73304.74</td>
 <td style="text-align: right;">-0.5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">ets</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0007952</td>
+<td style="text-align: right;">360711.84</td>
 <td style="text-align: right;">-0.5</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">naive</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0414338</td>
+<td style="text-align: right;">18057512.79</td>
 <td style="text-align: right;">-0.5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mean</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.8089472</td>
+<td style="text-align: right;">228394880.47</td>
 <td style="text-align: right;">-0.5</td>
 </tr>
 </tbody>
@@ -360,12 +358,12 @@ Key takeaway
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ljung box test</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(model_fit) <span class="sc">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box,<span class="at">lag =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="co"># Lag = 10 chosen due to non-seasonal data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-lb" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<caption>Table&nbsp;3: Ljung-Box test results for the model residuals</caption>
+<caption>Table&nbsp;3: Ljung-Box test results with lag=10 for the model residuals</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
@@ -378,25 +376,25 @@ Key takeaway
 <tr class="odd">
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">drift</td>
-<td style="text-align: right;">50.443880</td>
+<td style="text-align: right;">243.09252</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">ets</td>
-<td style="text-align: right;">1.948661</td>
-<td style="text-align: right;">0.1627312</td>
+<td style="text-align: right;">23.01567</td>
+<td style="text-align: right;">0.0106889</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">mean</td>
-<td style="text-align: right;">55.087303</td>
+<td style="text-align: right;">333.18777</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">naive</td>
-<td style="text-align: right;">50.443880</td>
+<td style="text-align: right;">330.20860</td>
 <td style="text-align: right;">0.0000000</td>
 </tr>
 </tbody>
@@ -456,10 +454,10 @@ Key takeaway
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="sc">%&gt;%</span> <span class="fu">stretch_tsibble</span>(<span class="at">.init =</span> <span class="dv">15</span>,<span class="at">.step =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(<span class="fu">log</span>(Population)), <span class="co"># ETS Model</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(<span class="fu">log</span>(Population)), <span class="co"># Naïve model</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(<span class="fu">log</span>(Population)), <span class="co"># Mean model</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(<span class="fu">log</span>(Population))) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
@@ -477,32 +475,32 @@ Key takeaway
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">drift</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0015133</td>
-<td style="text-align: right;">0.5223186</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">ets</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0024232</td>
-<td style="text-align: right;">0.2213413</td>
+<td style="text-align: right;">1146247</td>
+<td style="text-align: right;">0.2254617</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drift</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">43950684</td>
+<td style="text-align: right;">0.2080688</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">naive</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.1018618</td>
-<td style="text-align: right;">0.2379438</td>
+<td style="text-align: right;">43950684</td>
+<td style="text-align: right;">0.2080688</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mean</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.8487165</td>
-<td style="text-align: right;">0.1383483</td>
+<td style="text-align: right;">243400574</td>
+<td style="text-align: right;">0.1867781</td>
 </tr>
 </tbody>
 </table>
@@ -521,8 +519,8 @@ Key takeaway
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>After performing cross-validation of the data and obtaining the model metrics as illustrated by <a href="#tbl-cv">Table&nbsp;4</a>, <strong>we observe that the drift model remains the one that performs the best followed by the ETS model.</strong></p>
-<p>This indicates that <strong>even with the implementation of the cross-validation, the drift model is observed to train itself better due to the availability of more data and outperform the ETS model similar to what was observed in <a href="#sec-initial">Section&nbsp;3.1</a> .</strong></p>
+<p>After performing cross-validation of the data and obtaining the model metrics as illustrated by <a href="#tbl-cv">Table&nbsp;4</a>, <strong>we observe that the ETS model is the one that performs the best followed by the drift model.</strong></p>
+<p>This indicates that <strong>with the implementation of the cross-validation, the ETS model is observed to train itself better due to the availability of more train/test data and outperform the drift model which was observed to be the best in <a href="#sec-initial">Section&nbsp;3.1</a> .</strong></p>
 </div>
 </div>
 </section>

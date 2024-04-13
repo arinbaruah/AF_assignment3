@@ -61,9 +61,8 @@ We shall transform our data such that the overall trend of the data is linear. I
 #| label: fig-totpoplog
 #| fig-cap: "Logarithim population growth in Africa Western and Central AFW"
 
-pop_log <- pop %>% mutate(Log_population = log(Population))
 
-pop_log %>% autoplot(Log_population) + theme_minimal() + 
+pop %>% autoplot(log(Population)) + theme_minimal() + 
   labs(title = "Logarithmic population growth in Africa Western and Central AFW",y = "Log of population")
 ```
 
@@ -77,8 +76,8 @@ In the next step, we shall split our data into train and test data. The split is
 - Population data for the years __2018 - 2022__ will be used as the __test dataset__
 
 ```{r}
-pop_train <- pop_log %>% filter(Year < 2018) %>% select(-Population) # Train dataset
-pop_test <- pop_log %>% filter(Year >= 2018) %>% select(-Population) # Test dataset
+pop_train <- pop %>% filter(Year < 2018) # Train dataset
+pop_test <- pop %>% filter(Year >= 2018) # Test dataset
 ```
 
 
@@ -92,10 +91,10 @@ Now that we have transformed our data and split it based on training and testing
 As our __data does not contain a seasonality component, hence we shall not fit a seasonal naïve benchmark model.__
 
 ```{r}
-model_fit <- pop_train %>% model(ets = ETS(Log_population), # ETS Model
-                    naive = NAIVE(Log_population), # Naïve model
-                    mean = MEAN(Log_population), # Mean model
-                    drift = RW(Log_population ~ drift())) # Drift model
+model_fit <- pop_train %>% model(ets = ETS(log(Population)), # ETS Model
+                    naive = NAIVE(log(Population)), # Naïve model
+                    mean = MEAN(log(Population)), # Mean model
+                    drift = RW(log(Population) ~ drift())) # Drift model
 ```
 
 
@@ -136,11 +135,11 @@ model_fit %>% select(drift) %>% gg_tsresiduals() + ggtitle("Residuals in the dri
 
 ```{r}
 #| label: tbl-lb
-#| tbl-cap: "Ljung-Box test results for the model residuals"
+#| tbl-cap: "Ljung-Box test results with lag=10 for the model residuals"
 # ljung box test
 
 augment(model_fit) %>%
-  features(.resid,ljung_box) %>% kbl()
+  features(.resid,ljung_box,lag = 10) %>% kbl() # Lag = 10 chosen due to non-seasonal data
 ```
 
 :::{.callout-note}
@@ -185,10 +184,10 @@ In this section, we will attempt to perform cross-validation on our data which w
 #| tbl-cap: "Updated RMSE of each model after performing cross-validation on the test data"
 
 pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>% 
-                    model(ets = ETS(Log_population), # ETS Model
-                    naive = NAIVE(Log_population), # Naïve model
-                    mean = MEAN(Log_population), # Mean model
-                    drift = RW(Log_population ~ drift())) %>% # Drift model
+                    model(ets = ETS(log(Population)), # ETS Model
+                    naive = NAIVE(log(Population)), # Naïve model
+                    mean = MEAN(log(Population)), # Mean model
+                    drift = RW(log(Population))) %>% # Drift model
                              forecast(h = "5 years") %>% accuracy(pop_test) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
  
 ```
@@ -196,9 +195,9 @@ pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>%
 :::{.callout-note}
 # Key takeaway
 
-After performing cross-validation of the data and obtaining the model metrics as illustrated by @tbl-cv, __we observe that the drift model remains the one that performs the best followed by the ETS model.__ 
+After performing cross-validation of the data and obtaining the model metrics as illustrated by @tbl-cv, __we observe that the ETS model is the one that performs the best followed by the drift model.__ 
 
-This indicates that __even with the implementation of the cross-validation, the drift model is observed to train itself better due to the availability of more data and outperform the ETS model similar to what was observed in @sec-initial .__ 
+This indicates that __with the implementation of the cross-validation, the ETS model is observed to train itself better due to the availability of more train/test data and outperform the drift model which was observed to be the best in @sec-initial .__ 
 
 :::
 
