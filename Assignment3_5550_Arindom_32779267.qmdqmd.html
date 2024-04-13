@@ -500,9 +500,24 @@ Key takeaway
 <h2 data-number="3.4" class="anchored" data-anchor-id="reliability-of-each-of-the-methods"><span class="header-section-number">3.4</span> Reliability of each of the methods</h2>
 <p>The timeseries analysis on the logarithmic population data was performed through two methods:</p>
 <ul>
-<li><p>The first method as delineated in <a href="#sec-initial">Section&nbsp;3.1</a> created a single “5-year” forecast by using the test dataset to obtain the model performance metric in the form RMSE.</p></li>
+<li><p>The first method as delineated in <a href="#sec-initial">Section&nbsp;3.1</a> created a single “5-year” forecast by using the test dataset to obtain the model performance metric in the form of RMSE.</p></li>
 <li><p>The second method as delineated in <a href="#sec-final">Section&nbsp;3.3</a> takes the advantage of creating multiple “5-year” forecasts and testing on each of them to obtain the model performance metric (RMSE). This is done so by making multiple number of smaller training datasets which progressively increase by one observation in each “fold” of the data.</p></li>
 </ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Key takeaway
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>After assessing both methods as described, it becomes evident that the approach <strong>employing cross-validation to forecast future outcomes and furnish us with model accuracy stands out as the more dependable choice.</strong></p>
+<p>This is due to the fact that when we utilise cross-validation, we are creating multiple number of “5-year” forecasts instead of just one and evaluating the model performance based on all these forecasts by obtaining an average metric across all the folds obtained.</p>
+<p>As a result of the multiple training sets and the testing sets that are created during the method employing cross-validation, <strong>we obtain a model metric (such as RMSE) which is averaged over all the test sets, thereby providing us with a more accurate and a stable estimate to base our decision on.</strong></p>
+</div>
+</div>
 </section>
 </section>
 

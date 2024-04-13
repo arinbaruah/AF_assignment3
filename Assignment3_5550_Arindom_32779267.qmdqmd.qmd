@@ -205,8 +205,26 @@ This indicates that __even with the implementation of the cross-validation, the 
 
 The timeseries analysis on the logarithmic population data was performed through two methods:
 
-- The first method as delineated in @sec-initial created a single "5-year" forecast by using the test dataset to obtain the model performance metric in the form RMSE.
+- The first method as delineated in @sec-initial created a single "5-year" forecast by using the test dataset to obtain the model performance metric in the form of RMSE.
 
 - The second method as delineated in @sec-final takes the advantage of creating multiple "5-year" forecasts and testing on each of them to obtain the model performance metric (RMSE). This is done so by making multiple number of smaller training datasets which progressively increase by one observation in each "fold" of the data.
+
+
+
+:::{.callout-note}
+# Key takeaway
+
+After assessing both methods as described, it becomes evident that the approach __employing cross-validation to forecast future outcomes and furnish us with model accuracy stands out as the more dependable choice.__
+
+This is due to the fact that when we utilise cross-validation, we are creating multiple number of "5-year" forecasts instead of just one and evaluating the model performance based on all these forecasts by obtaining an average metric across all the folds obtained.
+
+As a result of the multiple training sets and the testing sets that are created during the method employing cross-validation, __we obtain a model metric (such as RMSE) which is averaged over all the test sets, thereby providing us with a more accurate and a stable estimate to base our decision on.__
+
+:::
+
+
+
+
+
 
 
