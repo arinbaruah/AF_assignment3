@@ -107,7 +107,8 @@ Once we have fitted our training data on the ETS model and the benchmark models,
 pop_fc <- model_fit |>
   forecast()
 
-pop_fc %>% accuracy(pop_test) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+pop_fc %>% accuracy(pop_test) %>% arrange(RMSE) %>% 
+  select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
 ```
 
 :::{.callout-note}
@@ -173,28 +174,39 @@ model_fit %>% forecast(h = "10 years")  %>% autoplot(pop_train) +
 As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely.__
 
 
-## Utilisation of cross-validation and recalculation of RMSE for the models
+## Utilisation of cross-validation and recalculation of RMSE for the models {#sec-final}
 
-In this section, we will attempt to perform cross-validation on our training data which will provide us with multiple smaller training data and allow our model to fit better, thereby providing us with more accurate forecasts. The implementation of cross-validation of our data is delineated below.
+In this section, we will attempt to perform cross-validation on our data which will provide us with multiple smaller training data and allow our model to fit better as we will be able to create multiple "5-year" forecasts, thereby providing us with more accuracy. The implementation of cross-validation of our data is delineated below.
 
 ```{r}
 #| label: tbl-cv
-#| tbl-cap: "Updated RMSE of each model after performing cross-validation on the training data"
+#| tbl-cap: "Updated RMSE of each model after performing cross-validation on the test data"
 
 pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>% 
                     model(ets = ETS(Log_population), # ETS Model
                     naive = NAIVE(Log_population), # Naïve model
                     mean = MEAN(Log_population), # Mean model
                     drift = RW(Log_population ~ drift())) %>% # Drift model
-                             forecast(h = "5 years") %>% accuracy(pop_train) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+                             forecast(h = "5 years") %>% accuracy(pop_test) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
  
 ```
 
 :::{.callout-note}
 # Key takeaway
 
-After performing cross-validation of the data and obtaining the model metrics as illustrated by @tbl-cv, __we observe that the ETS model is the one that performs the best followed by the drift model.__ 
+After performing cross-validation of the data and obtaining the model metrics as illustrated by @tbl-cv, __we observe that the drift model remains the one that performs the best followed by the ETS model.__ 
 
-This indicates that __with the implementation of the cross-validation, the ETS model is able to train itself better due to the availability of more data and outperform the drift method which was observed to be the best in @sec-initial .__ 
+This indicates that __even with the implementation of the cross-validation, the drift model is observed to train itself better due to the availability of more data and outperform the ETS model similar to what was observed in @sec-initial .__ 
 
 :::
+
+
+## Reliability of each of the methods
+
+The timeseries analysis on the logarithmic population data was performed through two methods:
+
+- The first method as delineated in @sec-initial created a single "5-year" forecast by using the test dataset to obtain the model performance metric in the form RMSE.
+
+- The second method as delineated in @sec-final takes the advantage of creating multiple "5-year" forecasts and testing on each of them to obtain the model performance metric (RMSE). This is done so by making multiple number of smaller training datasets which progressively increase by one observation in each "fold" of the data.
+
+

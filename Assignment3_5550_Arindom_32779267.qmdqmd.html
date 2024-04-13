@@ -253,7 +253,8 @@ Key takeaway
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-accuracy" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -421,20 +422,20 @@ Key takeaway
 </div>
 <p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely.</strong></p>
 </section>
-<section id="utilisation-of-cross-validation-and-recalculation-of-rmse-for-the-models" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="utilisation-of-cross-validation-and-recalculation-of-rmse-for-the-models"><span class="header-section-number">3.3</span> Utilisation of cross-validation and recalculation of RMSE for the models</h2>
-<p>In this section, we will attempt to perform cross-validation on our training data which will provide us with multiple smaller training data and allow our model to fit better, thereby providing us with more accurate forecasts. The implementation of cross-validation of our data is delineated below.</p>
+<section id="sec-final" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="sec-final"><span class="header-section-number">3.3</span> Utilisation of cross-validation and recalculation of RMSE for the models</h2>
+<p>In this section, we will attempt to perform cross-validation on our data which will provide us with multiple smaller training data and allow our model to fit better as we will be able to create multiple “5-year” forecasts, thereby providing us with more accuracy. The implementation of cross-validation of our data is delineated below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="sc">%&gt;%</span> <span class="fu">stretch_tsibble</span>(<span class="at">.init =</span> <span class="dv">15</span>,<span class="at">.step =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_train) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-cv" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
-<caption>Table&nbsp;4: Updated RMSE of each model after performing cross-validation on the training data</caption>
+<caption>Table&nbsp;4: Updated RMSE of each model after performing cross-validation on the test data</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
@@ -446,32 +447,32 @@ Key takeaway
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">ets</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0025288</td>
-<td style="text-align: right;">0.6989446</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">drift</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0078037</td>
-<td style="text-align: right;">0.4328332</td>
+<td style="text-align: right;">0.0015133</td>
+<td style="text-align: right;">0.5223186</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ets</td>
+<td style="text-align: left;">Africa Western and Central</td>
+<td style="text-align: left;">Test</td>
+<td style="text-align: right;">0.0024232</td>
+<td style="text-align: right;">0.2213413</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">naive</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.0890906</td>
-<td style="text-align: right;">0.0177905</td>
+<td style="text-align: right;">0.1018618</td>
+<td style="text-align: right;">0.2379438</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">mean</td>
 <td style="text-align: left;">Africa Western and Central</td>
 <td style="text-align: left;">Test</td>
-<td style="text-align: right;">0.5551190</td>
-<td style="text-align: right;">0.9222475</td>
+<td style="text-align: right;">0.8487165</td>
+<td style="text-align: right;">0.1383483</td>
 </tr>
 </tbody>
 </table>
@@ -490,10 +491,18 @@ Key takeaway
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>After performing cross-validation of the data and obtaining the model metrics as illustrated by <a href="#tbl-cv">Table&nbsp;4</a>, <strong>we observe that the ETS model is the one that performs the best followed by the drift model.</strong></p>
-<p>This indicates that <strong>with the implementation of the cross-validation, the ETS model is able to train itself better due to the availability of more data and outperform the drift method which was observed to be the best in <a href="#sec-initial">Section&nbsp;3.1</a> .</strong></p>
+<p>After performing cross-validation of the data and obtaining the model metrics as illustrated by <a href="#tbl-cv">Table&nbsp;4</a>, <strong>we observe that the drift model remains the one that performs the best followed by the ETS model.</strong></p>
+<p>This indicates that <strong>even with the implementation of the cross-validation, the drift model is observed to train itself better due to the availability of more data and outperform the ETS model similar to what was observed in <a href="#sec-initial">Section&nbsp;3.1</a> .</strong></p>
 </div>
 </div>
+</section>
+<section id="reliability-of-each-of-the-methods" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="reliability-of-each-of-the-methods"><span class="header-section-number">3.4</span> Reliability of each of the methods</h2>
+<p>The timeseries analysis on the logarithmic population data was performed through two methods:</p>
+<ul>
+<li><p>The first method as delineated in <a href="#sec-initial">Section&nbsp;3.1</a> created a single “5-year” forecast by using the test dataset to obtain the model performance metric in the form RMSE.</p></li>
+<li><p>The second method as delineated in <a href="#sec-final">Section&nbsp;3.3</a> takes the advantage of creating multiple “5-year” forecasts and testing on each of them to obtain the model performance metric (RMSE). This is done so by making multiple number of smaller training datasets which progressively increase by one observation in each “fold” of the data.</p></li>
+</ul>
 </section>
 </section>
 
