@@ -4,6 +4,7 @@ author: "Arindom Baruah (32779267)"
 format: html
 editor: visual
 number-sections: true
+code-fold: true
 execute: 
   warning: false
   message: false
@@ -12,10 +13,11 @@ execute:
 # Libraries
 
 ```{r}
+#| code-fold: false
 library(fpp3)
 library(tidyverse)
-library(tidyverse)
 library(kableExtra)
+library(ggplot2)
 ```
 
 # Data
@@ -87,7 +89,7 @@ Now that we have transformed our data and split it based on training and testing
 - Mean model
 - Drift model
 
-As our data does not contain a seasonality component, hence we shall not fit a seasonal naïve model.
+As our __data does not contain a seasonality component, hence we shall not fit a seasonal naïve benchmark model.__
 
 ```{r}
 model_fit <- pop_train %>% model(ets = ETS(Log_population), # ETS Model
@@ -171,7 +173,7 @@ model_fit %>% forecast(h = "10 years")  %>% autoplot(pop_train) +
   labs(title = "Forecasted population in Africa Western and Central AFW",
        y = "Logarithmic population") + theme_minimal()
 ```
-As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely.__
+As we can observe from @fig-model, __the mean and the naïve models have completely missed the overall trend of the logarithmic population rise__ while the __drift and the ETS models appear to follow the overall global trend very closely, albeit we can observe that the drift model has a narrower confidence interval compared to the ETS model.__
 
 
 ## Utilisation of cross-validation and recalculation of RMSE for the models {#sec-final}
@@ -223,8 +225,16 @@ As a result of the multiple training sets and the testing sets that are created 
 :::
 
 
+# Reference
 
+1. __fpp3__: Hyndman R (2023). _fpp3: Data for "Forecasting: Principles and Practice" (3rd Edition)_. R package version 0.5,
+  <https://CRAN.R-project.org/package=fpp3>.
 
+2. __ggplot2__: H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.
+
+3. __tidyverse__: Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” _Journal of Open Source Software_, *4*(43), 1686. doi:10.21105/joss.01686 <https://doi.org/10.21105/joss.01686>.
+
+4. __kableExtra__: Zhu H (2024). _kableExtra: Construct Complex Table with 'kable' and Pipe Syntax_. R package version 1.4.0, <https://CRAN.R-project.org/package=kableExtra>.
 
 
 

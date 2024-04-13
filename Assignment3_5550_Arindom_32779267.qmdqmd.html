@@ -109,18 +109,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fpp3)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="data" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Data</h1>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">32779267</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pop <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_rds</span>(<span class="st">"https://bit.ly/monashpopulationdata"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Country <span class="sc">==</span> <span class="fu">sample</span>(Country, <span class="dv">1</span>))</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>pop <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="tbl-data" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -185,8 +188,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 data-number="3.1" class="anchored" data-anchor-id="sec-initial"><span class="header-section-number">3.1</span> Splitting data into train-test data and fitting benchmark models.</h2>
 <p>Let us first visualise the population growth for the country “Africa Western and Central AFW”.</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pop <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>() <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Population growth in Africa Western and Central AFW"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-totpop" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -211,10 +217,13 @@ Key takeaway
 </div>
 </div>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pop_log <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Log_population =</span> <span class="fu">log</span>(Population))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>pop_log <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>(Log_population) <span class="sc">+</span> <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Logarithmic population growth in Africa Western and Central AFW"</span>,<span class="at">y =</span> <span class="st">"Log of population"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-totpoplog" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -231,8 +240,11 @@ Key takeaway
 <li>Population data for the years <strong>2018 - 2022</strong> will be used as the <strong>test dataset</strong></li>
 </ul>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Train dataset</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop_log <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Population) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:</p>
 <ul>
@@ -241,20 +253,26 @@ Key takeaway
 <li>Mean model</li>
 <li>Drift model</li>
 </ul>
-<p>As our data does not contain a seasonality component, hence we shall not fit a seasonal naïve model.</p>
+<p>As our <strong>data does not contain a seasonality component, hence we shall not fit a seasonal naïve benchmark model.</strong></p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> pop_train <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="co"># Drift model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>Once we have fitted our training data on the ETS model and the benchmark models, we will check the peformance of each of these models.</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> </span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="tbl-accuracy" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -323,7 +341,10 @@ Key takeaway
 <h2 data-number="3.2" class="anchored" data-anchor-id="checking-for-the-residuals-of-the-drift-model"><span class="header-section-number">3.2</span> Checking for the residuals of the Drift model</h2>
 <p>Let us now check how do the residuals look like for the drift model.</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="sc">%&gt;%</span> <span class="fu">select</span>(drift) <span class="sc">%&gt;%</span> <span class="fu">gg_tsresiduals</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Residuals in the drift model"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-residuals" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -334,10 +355,13 @@ Key takeaway
 </div>
 </div>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ljung box test</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(model_fit) <span class="sc">%&gt;%</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="tbl-lb" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -404,6 +428,8 @@ Key takeaway
 </div>
 <p>Let us try to visualise how do our forecasts look like for the training data.</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="ot">&lt;-</span> model_fit <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>(<span class="at">new_data =</span> pop_train)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -411,6 +437,7 @@ Key takeaway
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model_fit <span class="sc">%&gt;%</span> <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"10 years"</span>)  <span class="sc">%&gt;%</span> <span class="fu">autoplot</span>(pop_train) <span class="sc">+</span> </span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Forecasted population in Africa Western and Central AFW"</span>,</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Logarithmic population"</span>) <span class="sc">+</span> <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="fig-model" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -420,18 +447,21 @@ Key takeaway
 </div>
 </div>
 </div>
-<p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely.</strong></p>
+<p>As we can observe from <a href="#fig-model">Figure&nbsp;4</a>, <strong>the mean and the naïve models have completely missed the overall trend of the logarithmic population rise</strong> while the <strong>drift and the ETS models appear to follow the overall global trend very closely, albeit we can observe that the drift model has a narrower confidence interval compared to the ETS model.</strong></p>
 </section>
 <section id="sec-final" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="sec-final"><span class="header-section-number">3.3</span> Utilisation of cross-validation and recalculation of RMSE for the models</h2>
 <p>In this section, we will attempt to perform cross-validation on our data which will provide us with multiple smaller training data and allow our model to fit better as we will be able to create multiple “5-year” forecasts, thereby providing us with more accuracy. The implementation of cross-validation of our data is delineated below.</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="sc">%&gt;%</span> <span class="fu">stretch_tsibble</span>(<span class="at">.init =</span> <span class="dv">15</span>,<span class="at">.step =</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(Log_population), <span class="co"># ETS Model</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(Log_population), <span class="co"># Naïve model</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(Log_population), <span class="co"># Mean model</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(Log_population <span class="sc">~</span> <span class="fu">drift</span>())) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop_test) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output-display">
 <div id="tbl-cv" class="anchored">
 <table data-quarto-postprocess="true" class="table table-sm table-striped small">
@@ -519,6 +549,15 @@ Key takeaway
 </div>
 </div>
 </section>
+</section>
+<section id="reference" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Reference</h1>
+<ol type="1">
+<li><p><strong>fpp3</strong>: Hyndman R (2023). <em>fpp3: Data for “Forecasting: Principles and Practice” (3rd Edition)</em>. R package version 0.5, <a href="https://CRAN.R-project.org/package=fpp3" class="uri">https://CRAN.R-project.org/package=fpp3</a>.</p></li>
+<li><p><strong>ggplot2</strong>: H. Wickham. ggplot2: Elegant Graphics for Data Analysis. Springer-Verlag New York, 2016.</p></li>
+<li><p><strong>tidyverse</strong>: Wickham H, Averick M, Bryan J, Chang W, McGowan LD, François R, Grolemund G, Hayes A, Henry L, Hester J, Kuhn M, Pedersen TL, Miller E, Bache SM, Müller K, Ooms J, Robinson D, Seidel DP, Spinu V, Takahashi K, Vaughan D, Wilke C, Woo K, Yutani H (2019). “Welcome to the tidyverse.” <em>Journal of Open Source Software</em>, <em>4</em>(43), 1686. doi:10.21105/joss.01686 <a href="https://doi.org/10.21105/joss.01686" class="uri">https://doi.org/10.21105/joss.01686</a>.</p></li>
+<li><p><strong>kableExtra</strong>: Zhu H (2024). <em>kableExtra: Construct Complex Table with ‘kable’ and Pipe Syntax</em>. R package version 1.4.0, <a href="https://CRAN.R-project.org/package=kableExtra" class="uri">https://CRAN.R-project.org/package=kableExtra</a>.</p></li>
+</ol>
 </section>
 
 </main>
