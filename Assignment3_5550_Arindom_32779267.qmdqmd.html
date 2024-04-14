@@ -238,12 +238,11 @@ Key takeaway
 <li>Population data for the years <strong>2018 - 2022</strong> will be used as the <strong>test dataset</strong></li>
 </ul>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pop_train <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&lt;</span> <span class="dv">2018</span>) <span class="co"># Train dataset</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pop_test <span class="ot">&lt;-</span> pop <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span> <span class="dv">2018</span>) <span class="co"># Test dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
+<div class="alert alert-info">
+<p>🛠⚙️🔬⛓️</p>
 <p>Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:</p>
 <ul>
 <li>ETS (Error Trend Seasonality) model</li>
@@ -251,15 +250,25 @@ Key takeaway
 <li>Mean model</li>
 <li>Drift model</li>
 </ul>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>As our <strong>data does not contain a seasonality component, hence we shall not fit a seasonal naïve benchmark model.</strong></p>
+</div>
+</div>
 <div class="cell">
-<details>
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>model_fit <span class="ot">&lt;-</span> pop_train <span class="sc">%&gt;%</span> <span class="fu">model</span>(<span class="at">ets =</span> <span class="fu">ETS</span>(<span class="fu">log</span>(Population)), <span class="co"># ETS Model</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(<span class="fu">log</span>(Population)), <span class="co"># Naïve model</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(<span class="fu">log</span>(Population)), <span class="co"># Mean model</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(<span class="fu">log</span>(Population) <span class="sc">~</span> <span class="fu">drift</span>())) <span class="co"># Drift model</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>Once we have fitted our training data on the ETS model and the benchmark models, we will check the peformance of each of these models.</p>
 <div class="cell">
@@ -269,49 +278,54 @@ Key takeaway
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">forecast</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pop_fc <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">align =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">3</span>, <span class="at">bold =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-accuracy" class="anchored">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Table&nbsp;2: Model performance output metrics</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">.type</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">RMSE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">ACF1</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">.model</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">Country</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">.type</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">RMSE</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">ACF1</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">drift</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">73304.74</td>
-<td style="text-align: right;">-0.5</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">drift</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">73304.74</td>
+<td style="text-align: right; width: 2.5em;">-0.5</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">ets</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">360711.84</td>
-<td style="text-align: right;">-0.5</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">ets</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">360711.84</td>
+<td style="text-align: right; width: 2.5em;">-0.5</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">naive</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">18057512.79</td>
-<td style="text-align: right;">-0.5</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">naive</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">18057512.79</td>
+<td style="text-align: right; width: 2.5em;">-0.5</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">mean</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">228394880.47</td>
-<td style="text-align: right;">-0.5</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">mean</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">228394880.47</td>
+<td style="text-align: right; width: 2.5em;">-0.5</td>
 </tr>
 </tbody>
 </table>
@@ -358,44 +372,49 @@ Key takeaway
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ljung box test</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">augment</span>(model_fit) <span class="sc">%&gt;%</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box,<span class="at">lag =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>() <span class="co"># Lag = 10 chosen due to non-seasonal data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">features</span>(.resid,ljung_box,<span class="at">lag =</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">align =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">3</span>, <span class="at">bold =</span> <span class="cn">FALSE</span>) <span class="co"># Lag = 10 chosen due to non-seasonal data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-lb" class="anchored">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Table&nbsp;3: Ljung-Box test results with lag=10 for the model residuals</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">lb_stat</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">lb_pvalue</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">Country</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">.model</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">lb_stat</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">lb_pvalue</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">drift</td>
-<td style="text-align: right;">243.09252</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">drift</td>
+<td style="text-align: right; width: 2.5em;">243.09</td>
+<td style="text-align: right; width: 2.5em;">0.00</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">ets</td>
-<td style="text-align: right;">23.01567</td>
-<td style="text-align: right;">0.0106889</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">ets</td>
+<td style="text-align: right; width: 2.5em;">23.02</td>
+<td style="text-align: right; width: 2.5em;">0.01</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">mean</td>
-<td style="text-align: right;">333.18777</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">mean</td>
+<td style="text-align: right; width: 2.5em;">333.19</td>
+<td style="text-align: right; width: 2.5em;">0.00</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">naive</td>
-<td style="text-align: right;">330.20860</td>
-<td style="text-align: right;">0.0000000</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">naive</td>
+<td style="text-align: right; width: 2.5em;">330.21</td>
+<td style="text-align: right; width: 2.5em;">0.00</td>
 </tr>
 </tbody>
 </table>
@@ -458,49 +477,54 @@ Key takeaway
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">naive =</span> <span class="fu">NAIVE</span>(<span class="fu">log</span>(Population)), <span class="co"># Naïve model</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="fu">MEAN</span>(<span class="fu">log</span>(Population)), <span class="co"># Mean model</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">drift =</span> <span class="fu">RW</span>(<span class="fu">log</span>(Population))) <span class="sc">%&gt;%</span> <span class="co"># Drift model</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kbl</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                             <span class="fu">forecast</span>(<span class="at">h =</span> <span class="st">"5 years"</span>) <span class="sc">%&gt;%</span> <span class="fu">accuracy</span>(pop) <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(RMSE) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(ME,MAE,MPE,MAPE,MASE,RMSSE)) <span class="sc">%&gt;%</span> <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>, <span class="at">align =</span> <span class="st">"r"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>, <span class="at">bold =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">background =</span> <span class="st">"#FFAF33"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">width =</span> <span class="st">"2.5em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">row_spec</span>(<span class="dv">3</span>, <span class="at">bold =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-cv" class="anchored">
-<table data-quarto-postprocess="true" class="table table-sm table-striped small">
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
 <caption>Table&nbsp;4: Updated RMSE of each model after performing cross-validation on the test data</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">.model</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">Country</th>
-<th style="text-align: left;" data-quarto-table-cell-role="th">.type</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">RMSE</th>
-<th style="text-align: right;" data-quarto-table-cell-role="th">ACF1</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">.model</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">Country</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">.type</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">RMSE</th>
+<th data-quarto-table-cell-role="th" style="text-align: right; font-weight: bold; color: white !important; background-color: rgba(255, 175, 51, 255) !important;">ACF1</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">ets</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">672720.9</td>
-<td style="text-align: right;">0.6583410</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">ets</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">672720.9</td>
+<td style="text-align: right; width: 2.5em;">0.66</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">drift</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">25280713.9</td>
-<td style="text-align: right;">0.3191447</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">drift</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">25280713.9</td>
+<td style="text-align: right; width: 2.5em;">0.32</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">naive</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">25280713.9</td>
-<td style="text-align: right;">0.3191447</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">naive</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">25280713.9</td>
+<td style="text-align: right; width: 2.5em;">0.32</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">mean</td>
-<td style="text-align: left;">Africa Western and Central</td>
-<td style="text-align: left;">Test</td>
-<td style="text-align: right;">133095404.9</td>
-<td style="text-align: right;">0.9599110</td>
+<td style="text-align: right; width: 2.5em; color: white !important; background-color: rgba(255, 175, 51, 255) !important; width: 2.5em;">mean</td>
+<td style="text-align: right; width: 2.5em;">Africa Western and Central</td>
+<td style="text-align: right; width: 2.5em;">Test</td>
+<td style="text-align: right; width: 2.5em;">133095404.9</td>
+<td style="text-align: right; width: 2.5em;">0.96</td>
 </tr>
 </tbody>
 </table>

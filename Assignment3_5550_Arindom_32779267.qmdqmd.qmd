@@ -76,10 +76,13 @@ In the next step, we shall split our data into train and test data. The split is
 - Population data for the years __2018 - 2022__ will be used as the __test dataset__
 
 ```{r}
+#| code-fold: false
 pop_train <- pop %>% filter(Year < 2018) # Train dataset
 pop_test <- pop %>% filter(Year >= 2018) # Test dataset
 ```
 
+<div class="alert alert-info">
+🛠⚙️🔬⛓️
 
 Now that we have transformed our data and split it based on training and testing dataset, we will utilise the benchmark models to forecast the logarithmic population growth. The models which will be used are as follows:
 
@@ -88,9 +91,17 @@ Now that we have transformed our data and split it based on training and testing
 - Mean model
 - Drift model
 
+</div>
+
+:::{.callout-warning}
+# Note
+
 As our __data does not contain a seasonality component, hence we shall not fit a seasonal naïve benchmark model.__
 
+:::
+
 ```{r}
+#| code-fold: false
 model_fit <- pop_train %>% model(ets = ETS(log(Population)), # ETS Model
                     naive = NAIVE(log(Population)), # Naïve model
                     mean = MEAN(log(Population)), # Mean model
@@ -109,7 +120,12 @@ pop_fc <- model_fit |>
   forecast()
 
 pop_fc %>% accuracy(pop) %>% arrange(RMSE) %>% 
-  select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+  select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kable(digits = 2, align = "r") %>%
+  kable_styling(full_width = T) %>%
+  row_spec(0, color = "white", background = "#FFAF33", bold = TRUE) %>%
+  column_spec(1, width = "2.5em", color = "white", background = "#FFAF33") %>%
+  column_spec(1:5, width = "2.5em") %>%
+  row_spec(3, bold = FALSE)
 ```
 
 :::{.callout-note}
@@ -139,8 +155,14 @@ model_fit %>% select(drift) %>% gg_tsresiduals() + ggtitle("Residuals in the dri
 # ljung box test
 
 augment(model_fit) %>%
-  features(.resid,ljung_box,lag = 10) %>% kbl() # Lag = 10 chosen due to non-seasonal data
+  features(.resid,ljung_box,lag = 10) %>% kable(digits = 2, align = "r") %>%
+  kable_styling(full_width = T) %>%
+  row_spec(0, color = "white", background = "#FFAF33", bold = TRUE) %>%
+  column_spec(1, width = "2.5em", color = "white", background = "#FFAF33") %>%
+  column_spec(1:4, width = "2.5em") %>%
+  row_spec(3, bold = FALSE) # Lag = 10 chosen due to non-seasonal data
 ```
+
 
 :::{.callout-note}
 # Key takeaway
@@ -188,7 +210,12 @@ pop_train %>% stretch_tsibble(.init = 15,.step = 1) %>%
                     naive = NAIVE(log(Population)), # Naïve model
                     mean = MEAN(log(Population)), # Mean model
                     drift = RW(log(Population))) %>% # Drift model
-                             forecast(h = "5 years") %>% accuracy(pop) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kbl()
+                             forecast(h = "5 years") %>% accuracy(pop) %>% arrange(RMSE) %>% select(-c(ME,MAE,MPE,MAPE,MASE,RMSSE)) %>% kable(digits = 2, align = "r") %>%
+  kable_styling(full_width = T) %>%
+  row_spec(0, color = "white", background = "#FFAF33", bold = TRUE) %>%
+  column_spec(1, width = "2.5em", color = "white", background = "#FFAF33") %>%
+  column_spec(1:5, width = "2.5em") %>%
+  row_spec(3, bold = FALSE)
  
 ```
 
